@@ -1,4 +1,4 @@
-CC = gcc
+CC = gcc -Wall
 CFLAGS = -Wall -O3 -std=c99 -lm
 # Add -g for debugging, remove -O3 for faster compilation during development
 # CFLAGS = -Wall -g -std=c99 -lm
