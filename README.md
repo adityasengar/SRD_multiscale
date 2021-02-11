@@ -86,3 +86,4 @@ The codebase consists of several thousand lines of C/C++ code, meticulously deve
     Load the `trajectories.pdb` file (generated in the `data/` directory) into VMD to visualize particle movements and interactions.
 
 
+\n## Compilation\n\nTo compile the code, run:\n```\nmake\n```
