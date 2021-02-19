@@ -154,7 +154,7 @@ void updatecorrelator_MSD(int reset, double massA)
         }
         for (int icor = 0; icor < numcor; icor++) {
             if (ACFcount[icor] > 0) {
-                fprintf(output_file, " %f  \t %f\n", icor * num_dtau * dt, cor[icor] / (double)ACFcount[icor]);
+                fprintf(output_file, " %f  \t %f\n", icor * num_dtau * DT, cor[icor] / (double)ACFcount[icor]);
             }
         }
         fclose(output_file);
@@ -323,15 +323,15 @@ void profile_maker(int reset, double time)
 /**
  * @brief Calculates and outputs unary velocity autocorrelation function (ACF).
  * @param reset 1: initialize, 0: update, 2: finalize and write output.
- * @param dt Time step.
+ * @param DT Time step.
  */
-void velocity_correlator(int reset, double dt)
+void velocity_correlator(int reset, double DT)
 {
     FILE* output_file;
     char filename[256]; // Buffer for filename
 
-    // Construct filename based on dt
-    snprintf(filename, sizeof(filename), "data/vel_Corr_dt=%.3f.dat", dt);
+    // Construct filename based on DT
+    snprintf(filename, sizeof(filename), "data/vel_Corr_dt=%.3f.dat", DT);
 
     if (reset == 1) { // Initialize
         frame = 0;
@@ -369,10 +369,10 @@ void velocity_correlator(int reset, double dt)
         for (int icor = 0; icor < numcor; icor++) {
             if (ACFcount[icor] > 0) {
                 double current_acf = cor[icor] / (double)ACFcount[icor];
-                fprintf(output_file, " %f  \t %f\n", icor * num_dtau * dt, current_acf);
+                fprintf(output_file, " %f  \t %f\n", icor * num_dtau * DT, current_acf);
                 if (icor < numcor - 1) {
                     double next_acf = cor[icor + 1] / (double)ACFcount[icor + 1];
-                    final_diffusion_coeff += (current_acf + next_acf) * dt / 2.0; // Trapezoidal rule for integration
+                    final_diffusion_coeff += (current_acf + next_acf) * DT / 2.0; // Trapezoidal rule for integration
                 }
             }
         }
@@ -444,13 +444,13 @@ void dual_velocity_correlator(int reset, double massA)
         for (int icor = 0; icor < numcor; icor++) {
             double current_acf_srd = (ACFcount[icor] > 0) ? cor[icor] / (double)ACFcount[icor] : 0.0;
             double current_acf_foreign = (ACFcount1[icor] > 0) ? cor1[icor] / (double)ACFcount1[icor] : 0.0;
-            fprintf(output_file, " %f  \t  %f\n", icor * num_dtau * dt, current_acf_srd, current_acf_foreign);
+            fprintf(output_file, " %f  \t  %f\n", icor * num_dtau * DT, current_acf_srd, current_acf_foreign);
 
             if (icor < numcor - 1) {
                 double next_acf_srd = (ACFcount[icor + 1] > 0) ? cor[icor + 1] / (double)ACFcount[icor + 1] : 0.0;
                 double next_acf_foreign = (ACFcount1[icor + 1] > 0) ? cor1[icor + 1] / (double)ACFcount1[icor + 1] : 0.0;
-                helper_srd += (current_acf_srd + next_acf_srd) * dt / 2.0;
-                helper_foreign += (current_acf_foreign + next_acf_foreign) * dt / 2.0;
+                helper_srd += (current_acf_srd + next_acf_srd) * DT / 2.0;
+                helper_foreign += (current_acf_foreign + next_acf_foreign) * DT / 2.0;
             }
         }
         fprintf(output_file, "Diffusion Coefficient : %f \t %f\n", helper_srd / 3.0, helper_foreign / 3.0);
@@ -610,21 +610,21 @@ void something(int reset, double massA)
             double current_cor_srd = (ACFcount1[icor] > 0) ? cor1[icor] / (double)ACFcount1[icor] : 0.0;
             double current_cor_foreign = (ACFcount2[icor] > 0) ? cor2[icor] / (double)ACFcount2[icor] : 0.0;
 
-            fprintf(output_file, " %f  \t  %f  \n", icor * num_dtau * dt, current_cor_mixture);
+            fprintf(output_file, " %f  \t  %f  \n", icor * num_dtau * DT, current_cor_mixture);
 
             // Simpson's rule for integration (original code used this pattern)
             if (icor == 0 || icor == numcor - 1) { // First and last point
-                helper_mixture += dt / 3.0 * current_cor_mixture;
-                helper_srd += dt / 3.0 * current_cor_srd;
-                helper_foreign += dt / 3.0 * current_cor_foreign;
+                helper_mixture += DT / 3.0 * current_cor_mixture;
+                helper_srd += DT / 3.0 * current_cor_srd;
+                helper_foreign += DT / 3.0 * current_cor_foreign;
             } else if (icor % 2 == 0) { // Even points
-                helper_mixture += 2.0 * dt / 3.0 * current_cor_mixture;
-                helper_srd += 2.0 * dt / 3.0 * current_cor_srd;
-                helper_foreign += 2.0 * dt / 3.0 * current_cor_foreign;
+                helper_mixture += 2.0 * DT / 3.0 * current_cor_mixture;
+                helper_srd += 2.0 * DT / 3.0 * current_cor_srd;
+                helper_foreign += 2.0 * DT / 3.0 * current_cor_foreign;
             } else { // Odd points
-                helper_mixture += 4.0 * dt / 3.0 * current_cor_mixture;
-                helper_srd += 4.0 * dt / 3.0 * current_cor_srd;
-                helper_foreign += 4.0 * dt / 3.0 * current_cor_foreign;
+                helper_mixture += 4.0 * DT / 3.0 * current_cor_mixture;
+                helper_srd += 4.0 * DT / 3.0 * current_cor_srd;
+                helper_foreign += 4.0 * DT / 3.0 * current_cor_foreign;
             }
         }
         // Calculate mutual diffusion coefficient

@@ -44,7 +44,7 @@ void createlinkedlist()
     // --- Particle Combining/Splitting Logic for Axial Dispersion (CONV_DIFF_mass == 1) ---
     // This section handles the creation/destruction of particles based on their 'activate' status
     // and position, specifically for the axial dispersion method with different mass particles.
-    if (CONV_DIFF_mass == 1 && walls == 1 && CONV_DIFF == 2 && t >= tmin && (double)((int)(t / dt) % (int)(t_interval / dt)) < (t_step / dt))
+    if (CONV_DIFF_mass == 1 && walls == 1 && CONV_DIFF == 2 && t >= tmin && (double)((int)(t / DT) % (int)(t_interval / DT)) < (t_step / DT))
     {
         // Count particles marked for combining
         int marked_for_combining = 0;
@@ -177,7 +177,7 @@ void createlinkedlist()
     }
 
     // Particle splitting for CONV_DIFF_mass == 1 (if conditions met)
-    if (CONV_DIFF_mass == 1 && walls == 1 && CONV_DIFF == 2 && t >= tmin && (double)((int)(t / dt) % (int)(t_interval / dt)) >= 2900.0 && (double)((int)(t / dt) % (int)(t_interval / dt)) < 2901.0)
+    if (CONV_DIFF_mass == 1 && walls == 1 && CONV_DIFF == 2 && t >= tmin && (double)((int)(t / DT) % (int)(t_interval / DT)) >= 2900.0 && (double)((int)(t / DT) % (int)(t_interval / DT)) < 2901.0)
     {
         int Npart_temp = Npart;
         int Nsrd_temp = Nsrd;
@@ -240,10 +240,10 @@ void createlinkedlist()
 void updatevelocities()
 {
     for (int i = 0; i < Nsrd; i++) { // SRD particles
-        Vz[i] += g * dt;
+        Vz[i] += g * DT;
     }
     for (int i = Nsrd; i < Npart; i++) { // Foreign particles
-        Vz[i] += g * dt; // Assuming foreign particles also experience gravity
+        Vz[i] += g * DT; // Assuming foreign particles also experience gravity
     }
 }
 
@@ -282,10 +282,10 @@ void updatepositions()
         xprev = Rx[i];
         yprev = Ry[i];
         zprev = Rz[i];
-        xnew = xprev + Vx[i] * dt;
-        ynew = yprev + Vy[i] * dt;
-        znew = zprev + Vz[i] * dt;
-        Rz_artificial[i] += Vz[i] * dt; // Update artificial z-position
+        xnew = xprev + Vx[i] * DT;
+        ynew = yprev + Vy[i] * DT;
+        znew = zprev + Vz[i] * DT;
+        Rz_artificial[i] += Vz[i] * DT; // Update artificial z-position
 
         // Handle boundary conditions
         if (xnew < 0.0 || xnew >= box_x || ynew < 0.0 || ynew >= box_y || znew < 0.0 || znew >= box_z) {
@@ -420,7 +420,7 @@ void updatepositions()
                 velocity_changer(i); // Update velocity based on flow profile
             }
         } else if (CONV_DIFF == 2 && CONV_DIFF_mass == 0) { // Axial dispersion, same mass particles
-            if (t >= tmin && (double)((int)(t / dt) % (int)(t_interval / dt)) < (t_step / dt)) {
+            if (t >= tmin && (double)((int)(t / DT) % (int)(t_interval / DT)) < (t_step / DT)) {
                 if (znew < alpha * box_z) {
                     double randi = (double)rand() / (double)RAND_MAX;
                     if (randi < 0.5 && activate[i][0] == 0) {
@@ -432,7 +432,7 @@ void updatepositions()
                 Rz_artificial[i] = Rz[i]; // Reset artificial z-position
             }
         } else if (CONV_DIFF == 2 && CONV_DIFF_mass == 1) { // Axial dispersion, different mass particles
-            if (t >= tmin && (double)((int)(t / dt) % (int)(t_interval / dt)) < (t_step / dt)) {
+            if (t >= tmin && (double)((int)(t / DT) % (int)(t_interval / DT)) < (t_step / DT)) {
                 if (znew < alpha * box_z) {
                     double randi = (double)rand() / (double)RAND_MAX;
                     if (randi < 0.5 && activate[i][0] == 0) {
@@ -735,9 +735,9 @@ void adsorption()
             Vz[Nsrd - 1] = neargauss();
 
             // Position the desorbed particle near the surface
-            Rx[Nsrd - 1] = mod(Rx_adsA[i] + Vx[Nsrd - 1] * random_val * dt, L_x);
-            Ry[Nsrd - 1] = mod(Ry_adsA[i] + Vy[Nsrd - 1] * random_val * dt, L_y);
-            Rz[Nsrd - 1] = mod(Rz_adsA[i] + Vz[Nsrd - 1] * random_val * dt, L_z);
+            Rx[Nsrd - 1] = mod(Rx_adsA[i] + Vx[Nsrd - 1] * random_val * DT, L_x);
+            Ry[Nsrd - 1] = mod(Ry_adsA[i] + Vy[Nsrd - 1] * random_val * DT, L_y);
+            Rz[Nsrd - 1] = mod(Rz_adsA[i] + Vz[Nsrd - 1] * random_val * DT, L_z);
 
             catalyst[Nsrd - 1][0] = 0; // Mark as SRD particle
             catalyst[Nsrd - 1][1] = 0; // Mark as not adsorbed
@@ -787,9 +787,9 @@ void adsorption()
             Vz[Npart - 1] = neargauss();
 
             // Position the desorbed particle near the surface
-            Rx[Npart - 1] = mod(Rx_adsB[i] + Vx[Npart - 1] * random_val * dt, L_x);
-            Ry[Npart - 1] = mod(Ry_adsB[i] + Vy[Npart - 1] * random_val * dt, L_y);
-            Rz[Npart - 1] = mod(Rz_adsB[i] + Vz[Npart - 1] * random_val * dt, L_z);
+            Rx[Npart - 1] = mod(Rx_adsB[i] + Vx[Npart - 1] * random_val * DT, L_x);
+            Ry[Npart - 1] = mod(Ry_adsB[i] + Vy[Npart - 1] * random_val * DT, L_y);
+            Rz[Npart - 1] = mod(Rz_adsB[i] + Vz[Npart - 1] * random_val * DT, L_z);
 
             catalyst[Npart - 1][0] = 3; // Mark as foreign particle
             catalyst[Npart - 1][1] = 3; // Mark as not adsorbed

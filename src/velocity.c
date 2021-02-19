@@ -18,12 +18,12 @@
 void homogenous(int reset, double tx)
 {
     if (reset == 0) { // Initialize
-        arrays = (int*)calloc((int)(t_interval / dt), sizeof(int));
+        arrays = (int*)calloc((int)(t_interval / DT), sizeof(int));
     } else if (reset == 1) { // Update
         for (int i = Nsrd; i < Npart; i++) { // Iterate over foreign particles
             // Check if particle is within a specific z-range (e.g., measurement region)
             if (Rz_artificial[i] < (1 + alpha) / 2.0 * box_z + 0.5 && Rz_artificial[i] > (1 + alpha) / 2.0 * box_z - 0.5) {
-                if ((int)tx >= 0 && (int)tx < (int)(t_interval / dt)) { // Ensure tx is a valid index
+                if ((int)tx >= 0 && (int)tx < (int)(t_interval / DT)) { // Ensure tx is a valid index
                     arrays[(int)tx] += 1;
                 }
             }
@@ -38,8 +38,8 @@ void homogenous(int reset, double tx)
             fprintf(stderr, "Error: Could not open %s for writing.\n", filename);
             return;
         }
-        for (int i = 0; i < (int)(t_interval / dt); i++) {
-            fprintf(output_file, " %f  \t %d\n", (double)(i * dt), arrays[i]);
+        for (int i = 0; i < (int)(t_interval / DT); i++) {
+            fprintf(output_file, " %f  \t %d\n", (double)(i * DT), arrays[i]);
         }
         fclose(output_file);
         free_1D_array(arrays);

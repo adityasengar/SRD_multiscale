@@ -28,8 +28,8 @@ int doshift;
 
 FILE *fp_traj;
 double box_x, box_y, box_z;
-double t, dt, tmin, tmax, tstart, tau;
-int dt_flow;
+double t, DT, tmin, tmax, tstart, tau;
+int DT_flow;
 double shiftx, shifty, shiftz;
 double kTmeas, kTo;
 double conc;
@@ -277,7 +277,7 @@ int main( int argn, char * argv[] )
 
         for (conc = 0.0; conc <= 0.1; conc += 1.1) // Original loop was conc<=1.0, conc+=1.1, which runs once.
         {
-            dt = 0.1;   // Time step for simulation
+            DT = 0.1;   // Time step for simulation
             thetaA = 0.0; // Initial surface coverage of A
             thetaB = 0.0; // Initial surface coverage of B
             theta = 1.0 - thetaA - thetaB; // Initial vacant sites
@@ -286,7 +286,7 @@ int main( int argn, char * argv[] )
             catalytic_sites = Npart * 0.2; // Different calculation than Code1
             printf("Number of catalytic sites: %d\n", catalytic_sites);
 
-            dt_flow = (int)(10 * dt); // Time interval for flow updates
+            DT_flow = (int)(10 * DT); // Time interval for flow updates
 
             // Determine total number of particles based on chosen method
             if (which_particle_count_method == 0) { // Mass density is constant per unit cell
@@ -297,10 +297,10 @@ int main( int argn, char * argv[] )
             Nsrd = (int)((1 - conc) * Npart); // Number of SRD particles
             NA = Npart - Nsrd; // Number of foreign particles (A)
 
-            tmin = 1000.0 * dt;  // Start of evaluation for various parameters
-            tmax = 100.0 * dt * 1000.0; // End of simulation time
-            t_step = 1.0 * dt;   // Time pulse width for axial dispersion
-            t_interval = 1000.0 * dt; // Time between which next pulse is sent
+            tmin = 1000.0 * DT;  // Start of evaluation for various parameters
+            tmax = 100.0 * DT * 1000.0; // End of simulation time
+            t_step = 1.0 * DT;   // Time pulse width for axial dispersion
+            t_interval = 1000.0 * DT; // Time between which next pulse is sent
             tstart = 0.0;        // Simulation start time
 
             int trajoutput_interval = 50; // Interval for recording trajectories
@@ -337,7 +337,7 @@ int main( int argn, char * argv[] )
                 if (diffusion_method == 0) updatecorrelator_MSD(1, massA);
                 if (diffusion_method == 1) dual_velocity_correlator(1, massA);
                 if (diffusion_method == 2) new_diff(1, t);
-                if (diffusion_method == 3) velocity_correlator(1, dt);
+                if (diffusion_method == 3) velocity_correlator(1, DT);
                 if (diffusion_method == 4) something(1, massA);
             } else if (walls == 1 && track == 0 && CONV_DIFF == 0) {
                 velocityprofile(0, t);
@@ -348,7 +348,7 @@ int main( int argn, char * argv[] )
             }
 
             if (walls == 1 && CONV_DIFF == 2) {
-                homogenous(0, (double)((int)t / dt) % (int)(t_interval / dt));
+                homogenous(0, (double)((int)t / DT) % (int)(t_interval / DT));
                 velocityprofile(0, t);
             }
 
@@ -362,7 +362,7 @@ int main( int argn, char * argv[] )
                 // record_trajectories(); // This was commented out in original, keeping it commented.
             }
 
-            int total_timesteps = (int)(tmax / dt);
+            int total_timesteps = (int)(tmax / DT);
 
             // MAIN SIMULATION LOOP OVER TIME
             while (t < tmax) {
@@ -383,7 +383,7 @@ int main( int argn, char * argv[] )
                 }
 
                 // Update flow profiles for CONV_DIFF == 1
-                if (walls == 1 && CONV_DIFF == 1 && tstep % dt_flow == 0 && t > tmin) {
+                if (walls == 1 && CONV_DIFF == 1 && tstep % DT_flow == 0 && t > tmin) {
                     profile_maker(1, t);
                     update_velz_bin(1, t);
                     velocityprofile(1, t);
@@ -416,23 +416,23 @@ int main( int argn, char * argv[] )
                         if (diffusion_method == 0) updatecorrelator_MSD(0, massA);
                         if (diffusion_method == 1) dual_velocity_correlator(0, massA);
                         if (diffusion_method == 2) new_diff(0, t);
-                        if (diffusion_method == 3) velocity_correlator(0, dt);
+                        if (diffusion_method == 3) velocity_correlator(0, DT);
                         if (diffusion_method == 4) something(0, massA);
                     }
                 }
 
                 // Homogeneous updates for CONV_DIFF == 2
                 if (walls == 1 && CONV_DIFF == 2 && t >= tmin) {
-                    homogenous(1, (double)((int)t / dt) % (int)(t_interval / dt));
+                    homogenous(1, (double)((int)t / DT) % (int)(t_interval / DT));
                 }
 
                 tstep++;
-                t = t + dt;
+                t = t + DT;
             }
 
             // Final calls for data collection functions after simulation loop
             velocityprofile(2, t);
-            homogenous(2, (double)((int)t / dt) % (int)(t_interval / dt));
+            homogenous(2, (double)((int)t / DT) % (int)(t_interval / DT));
             printf("Finalizing data output...\n");
 
             if (fp_traj != NULL) {
@@ -447,7 +447,7 @@ int main( int argn, char * argv[] )
                 if (diffusion_method == 0) updatecorrelator_MSD(2, massA);
                 if (diffusion_method == 1) dual_velocity_correlator(2, massA);
                 if (diffusion_method == 2) new_diff(2, t);
-                if (diffusion_method == 3) velocity_correlator(2, dt);
+                if (diffusion_method == 3) velocity_correlator(2, DT);
                 if (diffusion_method == 4) something(2, massA);
             }
 
