@@ -18,3 +18,4 @@ extern int numcor;           // Number of correlation steps
 extern int num_dtau;         // Time interval between correlation measurements
 
 #endif /* CONSTANTS_H_ */
+\n\/\* Fluid density \*\/\n#define RHO 1.0
