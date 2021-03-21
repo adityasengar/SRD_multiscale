@@ -87,3 +87,4 @@ The codebase consists of several thousand lines of C/C++ code, meticulously deve
 
 
 \n## Compilation\n\nTo compile the code, run:\n```\nmake\n```
+\n## Usage\n\nAfter compiling, run the simulation with:\n```\n./srd\n```
