@@ -4,7 +4,7 @@
 #include <math.h>   // For floor, round
 #include "initialise.h"
 #include "variables.h"
-#include "constants.h" // For NPART_MAX, LBOX_MAX
+#include "constants.h" // For NUM_PARTICLES_MAX, LBOX_MAX
 #include "memory.h" // For memory allocation functions
 
 // Global variables for trajectory recording and correlation functions
