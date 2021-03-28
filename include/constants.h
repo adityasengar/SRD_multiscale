@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
-#define NPART_MAX 1000000    // Maximum number of SRD particles
+#define NUM_PARTICLES_MAX 1000000    // Maximum number of SRD particles
 #define NCOL_MAX  1000       // Maximum number of colloidal particles (not currently used in Code2)
 #define LBOX_MAX  100        // Maximum number of collision cells in box size (for any dimension)
 
